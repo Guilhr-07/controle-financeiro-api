@@ -99,4 +99,11 @@ class FinanceiroApiIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title", is("Parâmetro inválido")));
     }
+
+    @Test
+    void ordenacaoPorCampoInexistenteRetorna400() throws Exception {
+        mockMvc.perform(get("/api/transacoes").param("sort", "naoExiste"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title", is("Parâmetro inválido")));
+    }
 }
