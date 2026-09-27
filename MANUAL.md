@@ -1,7 +1,6 @@
 # Manual completo — API de Controle Financeiro
 
-> Antes deste, leia os **[Fundamentos](../MANUAIS/01-FUNDAMENTOS-SPRING-BOOT.md)** e o
-> **[Manual do Gestor de Tarefas](../gestor-tarefas-api/MANUAL.md)**. Aqui eu foco no que
+> Este é o segundo projeto da trilha, depois do Gestor de Tarefas. Aqui eu foco no que
 > este projeto tem de **novo**: relacionamento entre entidades e **agregação no banco**.
 
 Projeto: **API de finanças pessoais** — categorias, transações (receita/despesa) e um
@@ -30,7 +29,7 @@ docker compose up -d db
 DB_URL=jdbc:postgresql://localhost:5432/financeiro DB_USER=financeiro DB_PASSWORD=financeiro ./mvnw spring-boot:run
 ```
 
-Testes: `./mvnw test` (5 testes).
+Testes: `./mvnw test` (9 testes).
 
 ---
 
@@ -198,7 +197,8 @@ criam a própria massa de dados em um mês isolado (jan/2000) para o resumo bate
   um terceiro tipo (ex.: TRANSFERENCIA), adicione no enum e ajuste o resumo.
 - **Resumo por semana em vez de mês?** Troque `YearMonth` por um intervalo de datas no
   `TransacaoService` e crie a rota correspondente.
-- **Migrar para PostgreSQL de vez?** Já está pronto: suba o `compose.yaml` e passe as
-  variáveis `DB_*`. A semente H2 é pulada automaticamente no Postgres.
+- **Migrar para PostgreSQL de vez?** Já está pronto: `docker compose up` sobe a API com o
+  perfil `postgres`, que cria o schema pelo Flyway (`db/migration`) e valida as entidades.
+  A semente H2 é pulada automaticamente no Postgres.
 
-Próximo: **[E-commerce (JWT)](../ecommerce-api/MANUAL.md)** (Mês 4).
+Próximo projeto da trilha: E-commerce com JWT (Mês 4).
