@@ -1,0 +1,41 @@
+### Criar categoria de receita
+POST http://localhost:8080/api/categorias
+Content-Type: application/json
+
+{ "nome": "Salário", "tipo": "RECEITA" }
+
+### Criar categoria de despesa
+POST http://localhost:8080/api/categorias
+Content-Type: application/json
+
+{ "nome": "Moradia", "tipo": "DESPESA" }
+
+### Listar categorias
+GET http://localhost:8080/api/categorias
+
+### Criar transação (tipo vem da categoria)
+POST http://localhost:8080/api/transacoes
+Content-Type: application/json
+
+{ "descricao": "Salário de julho", "valor": 5000.00, "data": "2026-07-05", "categoriaId": 1 }
+
+### Criar despesa
+POST http://localhost:8080/api/transacoes
+Content-Type: application/json
+
+{ "descricao": "Aluguel", "valor": 1500.00, "data": "2026-07-10", "categoriaId": 2 }
+
+### Listar transações do mês
+GET http://localhost:8080/api/transacoes?ano=2026&mes=7&size=20
+
+### Resumo do mês (totais, saldo, por categoria)
+GET http://localhost:8080/api/resumo?ano=2026&mes=7
+
+### Validação falha (valor negativo) -> 400
+POST http://localhost:8080/api/transacoes
+Content-Type: application/json
+
+{ "descricao": "x", "valor": -10, "data": "2026-07-01", "categoriaId": 1 }
+
+### Health
+GET http://localhost:8080/actuator/health
