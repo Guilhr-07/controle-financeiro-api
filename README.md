@@ -1,10 +1,12 @@
 # Controle Financeiro API
 
+[![CI](https://github.com/Guilhr-07/controle-financeiro-api/actions/workflows/ci.yml/badge.svg)](https://github.com/Guilhr-07/controle-financeiro-api/actions/workflows/ci.yml) | Case completo, com as decisões e o que ficou de fora: [guilherme-portfolio.dev/projetos/controle-financeiro-api](https://guilherme-portfolio.dev/projetos/controle-financeiro-api)
+
 API REST de finanças pessoais: categorias, transações de receita e despesa, e um resumo mensal com totais, saldo e soma por categoria calculados no banco. Java 21, Spring Boot 4.1, PostgreSQL.
 
 ## Por que existe
 
-Segundo projeto da minha trilha de backend (Mês 3). Depois de um CRUD de uma tabela só (o Gestor de Tarefas), aqui entram relacionamento entre entidades, dinheiro e agregação. São três lugares onde é fácil errar sem perceber: somar em Java o que o banco soma melhor, guardar valor em `double`, e carregar a relação de cada linha numa consulta separada.
+Segundo projeto da minha trilha de backend. Depois de um CRUD de uma tabela só (o Gestor de Tarefas), aqui entram relacionamento entre entidades, dinheiro e agregação. São três lugares onde é fácil errar sem perceber: somar em Java o que o banco soma melhor, guardar valor em `double`, e carregar a relação de cada linha numa consulta separada.
 
 ## Como funciona
 
