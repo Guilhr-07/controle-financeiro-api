@@ -1,9 +1,9 @@
-# Manual completo — API de Controle Financeiro
+# Manual completo: API de Controle Financeiro
 
 > Este é o segundo projeto da trilha, depois do Gestor de Tarefas. Aqui eu foco no que
 > este projeto tem de **novo**: relacionamento entre entidades e **agregação no banco**.
 
-Projeto: **API de finanças pessoais** — categorias, transações (receita/despesa) e um
+Projeto: **API de finanças pessoais**: categorias, transações (receita/despesa) e um
 **resumo mensal** que soma tudo e calcula o saldo. É o marco do **Mês 3** (PostgreSQL,
 JPA/Hibernate, Docker, JUnit).
 
@@ -43,11 +43,11 @@ Categoria (1) ────< (N) Transacao
 ```
 
 Uma categoria tem **muitas** transações; cada transação pertence a **uma** categoria.
-O `*` é o pulo do gato: **o tipo (RECEITA/DESPESA) da transação vem da categoria** — você
+O `*` é o pulo do gato: **o tipo (RECEITA/DESPESA) da transação vem da categoria**. Você
 não informa, é derivado. Isso elimina o erro de uma "despesa" apontar para uma categoria
 de "receita".
 
-### `domain/Transacao.java` — o relacionamento em código
+### `domain/Transacao.java`: o relacionamento em código
 
 ```java
 @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -55,9 +55,9 @@ de "receita".
 private Categoria categoria;
 ```
 
-- `@ManyToOne` → muitas transações para uma categoria.
-- `@JoinColumn(name = "categoria_id")` → cria a coluna de chave estrangeira.
-- `fetch = LAZY` → só carrega a categoria do banco **quando** você acessá-la (evita
+- `@ManyToOne`: muitas transações para uma categoria.
+- `@JoinColumn(name = "categoria_id")`: cria a coluna de chave estrangeira.
+- `fetch = LAZY`: só carrega a categoria do banco **quando** você acessá-la (evita
   puxar dados à toa; bom para performance).
 
 O tipo derivado acontece no método privado, chamado pelo construtor e pelo `atualizar`:
@@ -69,7 +69,7 @@ private void vincular(Categoria categoria) {
 }
 ```
 
-E o valor usa `BigDecimal` (nunca `double` para dinheiro — `double` arredonda errado):
+E o valor usa `BigDecimal` (nunca `double` para dinheiro, porque `double` arredonda errado):
 
 ```java
 @Column(nullable = false, precision = 12, scale = 2)
@@ -78,12 +78,12 @@ private BigDecimal valor;              // até 10 dígitos + 2 casas decimais
 
 ---
 
-## 3. Agregação no banco (a novidade nº 2 — o coração do projeto)
+## 3. Agregação no banco (a novidade nº 2, o coração do projeto)
 
 O endpoint `GET /api/resumo?ano=&mes=` devolve totais e saldo. O importante: a **soma é
 feita no banco** (rápido, com milhões de linhas), não trazendo tudo para a aplicação.
 
-### `repository/TransacaoRepository.java` — consultas com JPQL
+### `repository/TransacaoRepository.java`: consultas com JPQL
 
 **JPQL** é o "SQL do JPA": você escreve sobre as **entidades**, não sobre as tabelas.
 
@@ -98,11 +98,11 @@ BigDecimal somarPorTipoNoPeriodo(@Param("tipo") TipoTransacao tipo,
                                  @Param("fim") LocalDate fim);
 ```
 
-- `sum(t.valor)` → o banco soma. `coalesce(…, 0)` → se não houver nada, devolve 0 (em vez
+- `sum(t.valor)`: o banco soma. `coalesce(..., 0)`: se não houver nada, devolve 0 (em vez
   de `null`).
-- `:tipo`, `:inicio`, `:fim` → parâmetros seguros (nada de concatenar string → sem SQL
+- `:tipo`, `:inicio`, `:fim`: parâmetros seguros (nada de concatenar string, então sem SQL
   injection).
-- `between` filtra o período — usei intervalo de datas (portável) em vez de funções tipo
+- `between` filtra o período. Usei intervalo de datas (portável) em vez de funções tipo
   `MONTH()` que mudam de um banco para outro.
 
 O detalhamento por categoria usa **projeção** (uma interface que o Spring preenche):
@@ -119,9 +119,9 @@ List<TotalPorCategoria> totaisPorCategoriaNoPeriodo(...);
 ```
 
 `group by` agrupa por categoria+tipo e soma cada grupo. `TotalPorCategoria` é só uma
-interface com `getCategoria()/getTipo()/getTotal()` — o Spring cria o objeto sozinho.
+interface com `getCategoria()/getTipo()/getTotal()`, e o Spring cria o objeto sozinho.
 
-### `service/TransacaoService.java` — montando o resumo
+### `service/TransacaoService.java`: montando o resumo
 
 ```java
 public ResumoResponse resumoMensal(int ano, int mes) {
@@ -160,7 +160,7 @@ if (transacaoRepository.existsByCategoriaId(id))
     throw new RegraNegocioException("Categoria " + id + " tem transações e não pode ser removida");
 ```
 
-O `GlobalExceptionHandler` transforma `RegraNegocioException` em **409 Conflict** — o
+O `GlobalExceptionHandler` transforma `RegraNegocioException` em **409 Conflict**, o
 código certo para "seu pedido é válido, mas conflita com o estado atual".
 
 ---
@@ -185,9 +185,8 @@ Requisições prontas em `api.http`.
 
 O `src/test/resources/application.properties` usa um H2 **separado** e desliga a semente
 (`spring.sql.init.mode=never`). Por quê? Porque dois contextos de teste compartilhariam o
-mesmo banco em memória e a semente rodaria duas vezes → erro de chave duplicada. Os testes
+mesmo banco em memória e a semente rodaria duas vezes, com erro de chave duplicada. Os testes
 criam a própria massa de dados em um mês isolado (jan/2000) para o resumo bater exato.
-*(Essa lição está no Jarbas, "Erros Comuns", `ERR-JAVA-005/006`.)*
 
 ---
 
